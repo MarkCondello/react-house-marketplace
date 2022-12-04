@@ -1,6 +1,8 @@
 ## Setup
 Brad Traversy's Gist has details for creating read write rules for the Firebase integration [here](https://gist.github.com/bradtraversy/caab8ebd8ff4b6e947632887e0183761).
 
+As part of the firebase setup, we also created a single collection item for listings and 3 indexes as well as an authed user.
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
