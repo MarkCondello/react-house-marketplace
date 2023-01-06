@@ -1,15 +1,20 @@
+# House Market project notes
 ## Setup
 Brad Traversy's Gist has details for creating read write rules for the Firebase integration [here](https://gist.github.com/bradtraversy/caab8ebd8ff4b6e947632887e0183761).
 
 As part of the firebase setup, we also created a single collection item for listings and 3 indexes as well as an authed user.
 
 ### Authentication
-- The `sign-up` page uses firebase auth to create new users with username and password crednetials. [View the firebase docs here.](https://firebase.google.com/docs/auth/web/start)
+The `sign-up` page uses firebase auth to create new users with username and password crednetials. [View the firebase docs here.](https://firebase.google.com/docs/auth/web/start)
 
 #### Adding signed up users to FireStore
-- As well as adding users to Authentication, we also add their details to the FireStore from the `sign-up` page. [View the Firestore docs here.](https://firebase.google.com/docs/firestore/manage-data/add-data)
+As well as adding users to Authentication, we also add their details to the FireStore from the `sign-up` page. [View the Firestore docs here.](https://firebase.google.com/docs/firestore/manage-data/add-data)
+
+#### Authed user data
+Logged in user data is stored in an Applications > IndexedDb on the browser console.
 
 
+---------
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
