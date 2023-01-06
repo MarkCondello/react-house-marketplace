@@ -4,9 +4,10 @@ Brad Traversy's Gist has details for creating read write rules for the Firebase 
 As part of the firebase setup, we also created a single collection item for listings and 3 indexes as well as an authed user.
 
 ### Authentication
-- The sign up page uses firebase auth to create new users with username and password crednetials. [View the firebase docs here.](https://firebase.google.com/docs/auth/web/start)
+- The `sign-up` page uses firebase auth to create new users with username and password crednetials. [View the firebase docs here.](https://firebase.google.com/docs/auth/web/start)
 
-
+#### Adding signed up users to FireStore
+- As well as adding users to Authentication, we also add their details to the FireStore from the `sign-up` page. [View the Firestore docs here.](https://firebase.google.com/docs/firestore/manage-data/add-data)
 
 
 # Getting Started with Create React App
