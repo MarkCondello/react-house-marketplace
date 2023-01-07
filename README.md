@@ -22,6 +22,9 @@ As well as adding users to Authentication, we also add their details to the Fire
 </Route>
 ```
 
+### Google OAuth login
+Included is the option for users to sign in or up with their Google account. This like the manual sign up saves the users details (name, email and timestamp) to the firestore.
+
 ---------
 # Getting Started with Create React App
 

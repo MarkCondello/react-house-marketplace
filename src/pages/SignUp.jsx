@@ -5,12 +5,13 @@ import { getAuth, createUserWithEmailAndPassword, updateProfile } from 'firebase
 import { db } from '../firebase.config'
 // Depts for auth end
 // Depts for FireStore start
-import { doc, setDoc, serverTimestamp } from "firebase/firestore"; 
+import { doc, setDoc, serverTimestamp } from "firebase/firestore"
 // Depts for FireStore end
 
 import { toast } from 'react-toastify'
 import { ReactComponent as ArrowRightIcon} from '../assets/svg/keyboardArrowRightIcon.svg'
 import visibilityIcon from '../assets/svg/visibilityIcon.svg'
+import OAuth from '../components/OAth'
 
 function SignUp() {
   const [showPassword, setShowPassword] = useState(false),
@@ -82,7 +83,7 @@ function SignUp() {
           </button>
         </div>
       </form>
-      {/* Google OAuth component */}
+      <OAuth />
       <Link to='/sign-in' className="registerLink">Sign in instead</Link>
     </div>
   </>);
