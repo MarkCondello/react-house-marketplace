@@ -4,7 +4,7 @@ Brad Traversy's Gist has details for creating read write rules for the Firebase 
 Included in this link is the setup data for a single listing as well.
 
 As part of the firebase setup, we also created a single collection item for listings and 3 indexes. See details of the indexes below:
-![Listing indexes.](https://github.com/MarkCondello/react-house-marketplace/blob/master/src/assets/jpg/listing-indexes.jpg)
+![Listing indexes.](https://github.com/MarkCondello/react-house-marketplace/blob/master/src/assets/jpg/listing-indexes.png)
 
 ### Authentication
 The `sign-up` page uses firebase auth to create new users with username and password crednetials. [View the firebase docs here.](https://firebase.google.com/docs/auth/web/start)
