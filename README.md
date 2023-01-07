@@ -1,18 +1,26 @@
 # House Market project notes
 ## Setup
 Brad Traversy's Gist has details for creating read write rules for the Firebase integration [here](https://gist.github.com/bradtraversy/caab8ebd8ff4b6e947632887e0183761).
+Included in this link is the setup data for a single listing as well.
 
-As part of the firebase setup, we also created a single collection item for listings and 3 indexes as well as an authed user.
+As part of the firebase setup, we also created a single collection item for listings and 3 indexes. See details of the indexes below:
+![Listing indexes.](https://github.com/MarkCondello/react-house-marketplace/blob/master/src/assets/jpg/listing-indexes.jpg)
 
 ### Authentication
 The `sign-up` page uses firebase auth to create new users with username and password crednetials. [View the firebase docs here.](https://firebase.google.com/docs/auth/web/start)
 
-#### Adding signed up users to FireStore
+### Adding signed-up users to FireStore
 As well as adding users to Authentication, we also add their details to the FireStore from the `sign-up` page. [View the Firestore docs here.](https://firebase.google.com/docs/firestore/manage-data/add-data)
 
-#### Authed user data
-Logged in user data is stored in an Applications > IndexedDb on the browser console.
+### Authed users
+- Logged in user data is stored in an Applications > IndexedDb on the browser console.
+- Auth routes are set with the <PrivateRoute /> component which acts as a Controler based on the `loggedIn` boolean value returned from the `useAuthStatus` custom hook. The implementation of the route is like so:
 
+```
+<Route path="/profile" element={<PrivateRoute />}>{/* Uses the Outlet component from react-router-dom */}
+  <Route path="/profile" element={<Profile />}></Route>
+</Route>
+```
 
 ---------
 # Getting Started with Create React App
