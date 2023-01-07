@@ -10,6 +10,7 @@ import Offers from './pages/Offers'
 import Profile from './pages/Profile'
 import SignIn from './pages/SignIn'
 import SignUp from './pages/SignUp'
+import PrivateRoute from './components/PrivateRoute'
 
 function App() {
   return (
@@ -18,7 +19,11 @@ function App() {
       <Routes>
         <Route path="/" element={<Explore />}></Route>
         <Route path="/offers" element={<Offers />}></Route>
-        <Route path="/profile" element={<Profile />}></Route>
+
+        <Route path="/profile" element={<PrivateRoute />}>{/* Uses the Outlet component from react-router-dom */}
+          <Route path="/profile" element={<Profile />}></Route>
+        </Route>
+
         <Route path="/sign-in" element={<SignIn />}></Route>
         <Route path="/sign-up" element={<SignUp />}></Route>
         <Route path="/forgot-password" element={<ForgotPassword />}></Route>

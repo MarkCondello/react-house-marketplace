@@ -7,7 +7,6 @@ import { toast } from 'react-toastify'
 import { useEffect, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 
-
 function Profile() {
   const auth = getAuth(),
   navigate = useNavigate(),
@@ -22,8 +21,6 @@ function Profile() {
     navigate('/')
   },
   onSubmit = async (event) => {
-   console.log('Reached onSubmit')
-
     // This updates firestore db
     try {
       if (auth.currentUser.displayName !== name) {
@@ -52,42 +49,41 @@ function Profile() {
   },
   { name, email} = formData
 
-  return <div className="profile">
-      <header className="profileHeader">
-        <p className="pageHeader">My Profile</p>
-        <button type="button" className="logOut" onClick={onLogout}>Log out</button>
-      </header>
-      <main>
-        <div className="profileDetailsHeader">
-          <p className="profileDetailsText">Personal Details</p>
-          <p className="changePersonalDetails"
-            onClick={() => { changeDetails && onSubmit(); setChangeDetails((prevState) => !prevState) }}
-          >{changeDetails ? 'done' : 'change'}</p>
-        </div>
-        <div className="profileCard">
-          <form>
+  return (
+  <div className="profile">
+    <header className="profileHeader">
+      <p className="pageHeader">My Profile</p>
+      <button type="button" className="logOut" onClick={onLogout}>Log out</button>
+    </header>
+    <main>
+      <div className="profileDetailsHeader">
+        <p className="profileDetailsText">Personal Details</p>
+        <p className="changePersonalDetails"
+          onClick={() => { changeDetails && onSubmit(); setChangeDetails((prevState) => !prevState) }}
+        >{changeDetails ? 'done' : 'change'}</p>
+      </div>
+      <div className="profileCard">
+        <form>
+          <input
+            type="text"
+            id="name"
+            className={ !changeDetails ? 'profileName' : 'profileNameActive' }
+            disabled={!changeDetails}
+            value={name}
+            onChange={onChange}
+          />
             <input
-              type="text"
-              id="name"
-              className={ !changeDetails ? 'profileName' : 'profileNameActive' }
-              disabled={!changeDetails}
-              value={name}
-              onChange={onChange}
-            />
-             <input
-              type="text"
-              id="email"
-              className={ !changeDetails ? 'profileEmail' : 'profileEmailActive' }
-              disabled={!changeDetails}
-              value={email}
-              onChange={onChange}
-            />
-          </form>
-        </div>
-      </main>
-    </div>
-  // return (formData ? <h1>{formData.name}</h1> : <p>Not logged in</p>)
-
+            type="text"
+            id="email"
+            className={ !changeDetails ? 'profileEmail' : 'profileEmailActive' }
+            disabled={!changeDetails}
+            value={email}
+            onChange={onChange}
+          />
+        </form>
+      </div>
+    </main>
+  </div>)
 }
 
 export default Profile;
