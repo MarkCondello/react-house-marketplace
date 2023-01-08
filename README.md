@@ -25,7 +25,11 @@ As well as adding users to Authentication, we also add their details to the Fire
 ### Google OAuth login
 Included is the option for users to sign in or up with their Google account. This like the manual sign up saves the users details (name, email and timestamp) to the firestore.
 
+### Reading listings
+A `Category` component which receives either `rent` or `sale` categories, queries Firebase for the associated `listings` saved.
+
 ---------
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

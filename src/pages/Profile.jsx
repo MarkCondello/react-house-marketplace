@@ -4,8 +4,8 @@ import { updateDoc, doc } from 'firebase/firestore'
 import { db } from '../firebase.config'
 // Depts for auth end
 import { toast } from 'react-toastify'
-import { useEffect, useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 function Profile() {
   const auth = getAuth(),
