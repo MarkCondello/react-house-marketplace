@@ -23,11 +23,18 @@ As well as adding users to Authentication, we also add their details to the Fire
 ```
 
 ### Google OAuth login
-Included is the option for users to sign in or up with their Google account. This like the manual sign up saves the users details (name, email and timestamp) to the firestore.
+Included is the option for users to sign in or up with their Google account. This like the manual sign up saves the users details (name, email and timestamp) to the firestore. When the Promises resolve, the image is stored in Firesbase storage and an image url is returned. These image urls are saved under the `imgUrls` property on the listing in Firebase Database.
 
 ### Reading listings
 A `Category` component which receives either `rent` or `sale` categories, queries Firebase for the associated `listings` saved.
 
+### Geo Location
+The Google API Geolocation is used to gather the lat longs for a listing address. An .env located in the root with a property named `REACT_APP_GEOCODE_API_KEY` must be present to call the API and receive the location data.
+
+### Image uploads
+[View the firebase docs here.](https://firebase.google.com/docs/storage/web/upload-files#monitor_upload_progress).
+The `create listings` feature allows for multiple image uploads. To support this, we have modified the code example in the link above and included the Promises API to process all the images added to the form file input.
+UUID npm package is used to set a uniqie image ID.
 ---------
 
 # Getting Started with Create React App
