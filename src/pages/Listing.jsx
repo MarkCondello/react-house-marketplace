@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 
 import { getDoc, doc } from 'firebase/firestore'
@@ -61,7 +61,7 @@ function Listing() {
       <p className="listingLocationTitle">Location</p>
       {/* Map goes here */}
       {auth.currentUser?.uid !== listing.userRef && (
-        <Link to={`/contact/${listing.userRef}?listingName=${listing.name}&listingLocation=${listing.location}`} className='primaryButton'>Contact Landlord</Link>
+        <Link to={`/contact/${listing.userRef}?listingName=${listing.name}`} className='primaryButton'>Contact Landlord</Link>
       )}
     </div>
   </main>

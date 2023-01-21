@@ -7,6 +7,7 @@ import Navbar from './components/NavBar'
 import PrivateRoute from './components/PrivateRoute'
 
 import Category from './pages/Category'
+import Contact from './pages/Contact'
 import CreateListing from './pages/CreateListing'
 import Explore from './pages/Explore'
 import ForgotPassword from './pages/ForgotPassword'
@@ -23,6 +24,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Explore />}></Route>
         <Route path="/offers" element={<Offers />}></Route>
+        <Route path="/contact/:landlordId" element={<Contact />}></Route>
         <Route path="/category/:categoryName" element={<Category />}></Route>
         <Route path="/category/:categoryName/:listingId" element={<Listing />}></Route>
 
