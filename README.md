@@ -1,7 +1,7 @@
 # House Market project notes
 ## Setup
 Brad Traversy's Gist has details for creating read write rules for the Firebase integration [here](https://gist.github.com/bradtraversy/caab8ebd8ff4b6e947632887e0183761).
-Included in this link is the setup data for a single listing as well.
+Included in this link is the setup data for a single listing as well. The completed project can be found on [Brad's github account](https://github.com/bradtraversy/house-marketplace).
 
 As part of the firebase setup, we also created a single collection item for listings and 3 indexes. See details of the indexes below:
 ![Listing indexes.](https://github.com/MarkCondello/react-house-marketplace/blob/master/src/assets/jpg/listings-indexes.png)

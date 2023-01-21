@@ -37,6 +37,8 @@
   },
   "devDependencies": {
     "firebase": "^9.14.0",
+    "leaflet": "^1.9.3",
+    "react-leaflet": "^4.2.0",
     "react-router-dom": "^6.6.1",
     "react-toastify": "^9.1.1",
     "uuid": "^9.0.0"
