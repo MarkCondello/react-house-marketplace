@@ -4,8 +4,10 @@ import { updateDoc, doc } from 'firebase/firestore'
 import { db } from '../firebase.config'
 // Depts for auth end
 import { toast } from 'react-toastify'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
+import arrowRightIcon from '../assets/svg/keyboardArrowRightIcon.svg'
+import homeIcon from '../assets/svg/homeIcon.svg'
 
 function Profile() {
   const auth = getAuth(),
@@ -27,7 +29,6 @@ function Profile() {
         await updateProfile(auth.currentUser, {
           displayName: name
         })
-
         const userRef = doc(db, 'users', auth.currentUser.uid)
         await updateDoc(userRef, {
           name
@@ -82,6 +83,11 @@ function Profile() {
           />
         </form>
       </div>
+      <Link to="/create-listing" className="createListing">
+        <img src={homeIcon} alt="Home icon."/>
+        <p>Sell or rent your home</p>
+        <img src={arrowRightIcon} alt="Arrow right icon."/>
+      </Link>
     </main>
   </div>)
 }
