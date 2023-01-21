@@ -141,11 +141,9 @@ function CreateListing() {
       })
       )
     }
-    console.log('reached onMutate')
   }
 
   useEffect(() => {
-    console.log('reached useEffect')
     if (isMounted) {
       onAuthStateChanged(auth, (user) => {
         if (user) {
@@ -242,7 +240,7 @@ function CreateListing() {
             onClick={onMutate}
           >No</button>
         </div>
-        <label htmlFor="parking" className="formLabel">Furnished</label>
+        <label htmlFor="furnished" className="formLabel">Furnished</label>
         <div className="formButtons">
           <button
             type="button"
@@ -262,7 +260,6 @@ function CreateListing() {
         <label htmlFor="address" className="formLabel">Address</label>
         <textarea
           className='formInputAddress'
-          type="number"
           id='address'
           value={address}
           onChange={onMutate}
@@ -352,7 +349,7 @@ function CreateListing() {
           maxLength='6'
           accept='.jpg,.png,.jpeg'
           multiple
-          required={offer}
+          required
         />
         <button
           type="submit"
@@ -363,6 +360,4 @@ function CreateListing() {
   </div>
 }
 
-export default CreateListing;
-
-// I'm up to 12:18 https://www.udemy.com/course/react-front-to-back-2022/learn/lecture/29769170#questions/16384874
+export default CreateListing

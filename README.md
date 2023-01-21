@@ -33,8 +33,8 @@ The Google API Geolocation is used to gather the lat longs for a listing address
 
 ### Image uploads
 [View the firebase docs here.](https://firebase.google.com/docs/storage/web/upload-files#monitor_upload_progress).
-The `create listings` feature allows for multiple image uploads. To support this, we have modified the code example in the link above and included the Promises API to process all the images added to the form file input.
-UUID npm package is used to set a uniqie image ID.
+The `create listings` feature allows for multiple image uploads. To support this, we have modified the code example in the docs link above and included the Promise.all() API to process all the images uploaded through the file input.
+The UUID npm package is used to set a uniqie image ID.
 ---------
 
 # Getting Started with Create React App
