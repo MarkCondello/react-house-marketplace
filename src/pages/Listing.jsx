@@ -9,8 +9,14 @@ import { Formatter } from '../helpers/formatter.js'
 import Spinner from '../components/Spinner'
 import shareIcon from '../assets/svg/shareIcon.svg'
 
-import { MapContainer, Marker, Markerm, Popup, TileLayer } from 'react-leaflet'
+import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet'
 
+// Swiper deps
+import SwiperCore, {Navigation, Pagination, Scrollbar, A11y } from 'swiper'
+import { Swiper, SwiperSlide } from 'swiper/react'
+import 'swiper/swiper-bundle.min.css'
+// 6.8.1 is what Brad uses
+SwiperCore.use([Navigation, Pagination, Scrollbar, A11y])
 function Listing() {
   const [listing, setListing] = useState(null),
   [loading, setLoading] = useState(true),
@@ -36,7 +42,19 @@ function Listing() {
     return <Spinner />
   }
   return <main>
-  {/* SLideshot */}
+    {/* <p>Imgs ({listing.imgUrls.length})</p>
+    <div className="swiperSlideDiv" style={{backgroundImage: `url(${listing.imgUrls[0]})`, backgroundSize: 'cover'}}></div> */}
+
+  <Swiper slidesPerView={1} pagination={{clickable: true}} className="swiperSlider">
+    {listing.imgUrls.map((url, index)=>{
+     return <SwiperSlide key={index}>
+        <div
+          className="swiperSlideDiv"
+          style={{backgroundImage: `url(${listing.imgUrls[0]})`, backgroundSize: 'cover', backgroundPosition: 'center'}}
+        ></div>
+      </SwiperSlide>
+    })}
+  </Swiper>
   <div className="shareIconDiv" onClick={() => {
     navigator.clipboard.writeText(window.location.href)
     setshareLinkCopied(true)
