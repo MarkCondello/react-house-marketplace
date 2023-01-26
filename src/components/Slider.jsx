@@ -43,7 +43,7 @@ function Slider() {
     <Spinner />
   }
 
-  return listings && (
+  return listings && listings.length && (
     <>
       <p className="exploreHeading">Recommended</p>
       <Swiper slidesPerView={1} pagination={{clickable: true}}>

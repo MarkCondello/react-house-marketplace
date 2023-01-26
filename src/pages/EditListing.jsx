@@ -2,19 +2,20 @@ import { useState, useEffect, useRef } from 'react'
 // depts required for auth and storage start
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
+import { serverTimestamp, doc, updateDoc, getDoc } from 'firebase/firestore'
 import { db } from '../firebase.config'
 // depts required for auth and storage end
 
 import { v4 as uuidv4 } from 'uuid'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import Spinner from '../components/Spinner'
 import { toast } from 'react-toastify'
 
-function CreateListing() {
+function EditListing() {
   // eslint-disable-next-line
   const [geoLocationEnabled, setGeoLocationEnabled] = useState(true),
   [loading, setLoading] = useState(false),
+  [listing, setListing] = useState(false),
   [formData, setFormData] = useState({
     type: 'rent',
     name: '',
@@ -32,6 +33,7 @@ function CreateListing() {
   }),
   auth = getAuth(),
   navigate = useNavigate(),
+  params = useParams(),
   isMounted = useRef(true),
   {type, name, bedrooms, bathrooms, parking, furnished, address, offer, regularPrice, discountedPrice, images, latitude, longitude} = formData,
   onSubmit = async (event) => {
@@ -117,9 +119,11 @@ function CreateListing() {
     !formDataCopy.offer && delete formDataCopy.discountedPrice
 
     console.log({imgUrls})
-    const docRef = await addDoc(collection(db, 'listings'), formDataCopy)
+    // const docRef = await addDoc(collection(db, 'listings'), formDataCopy)
+    const docRef = doc(db, 'listings', params.listingId)
+    await updateDoc(docRef, formDataCopy)
     setLoading(false)
-    toast.success('Listing saved')
+    toast.success('Listing was updated.')
     navigate(`/category/${formDataCopy.type}/${docRef.id}`)
   },
   onMutate = (event) => {
@@ -144,6 +148,7 @@ function CreateListing() {
     }
   }
 
+  //sets userRef to logged in user
   useEffect(() => {
     if (isMounted) {
       onAuthStateChanged(auth, (user) => {
@@ -157,15 +162,39 @@ function CreateListing() {
     return () => {
       isMounted.current = false
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[isMounted])
+  },[isMounted, formData, auth, navigate])
+
+  //fetch listing to edit
+  useEffect(() => {
+    setLoading(true)
+    const fetchListing = async () => {
+      const docRef = doc(db, 'listings', params.listingId),
+      docSnapshot = await getDoc(docRef)
+      if (docSnapshot.exists) {
+        setListing(docSnapshot.data())
+        setFormData({...docSnapshot.data(), address: docSnapshot.data().location})
+        setLoading(false)
+      } else {
+        navigate('/')
+        toast.error('Listing does not exist')
+      }
+    }
+    fetchListing()
+  }, [params.listingId, navigate])
+
+  useEffect(()=>{
+    if (listing && listing.userRef !== auth.currentUser.uid) {
+      toast.error('You can not edit this listing.')
+      navigate('/')
+    }
+  }, [navigate, auth.currentUser.uid, listing])
 
   if (loading) {
     return <Spinner />
   }
   return <div className='profile'>
     <header>
-      <p className="pageHeader">Create a listing</p>
+      <p className="pageHeader">Edit listing</p>
     </header>
     <main>
       <form onSubmit={onSubmit}>
@@ -356,10 +385,10 @@ function CreateListing() {
         <button
           type="submit"
           className='primaryButton createListingButton'
-        >Create Listing</button>
+        >Edit Listing</button>
       </form>
     </main>
   </div>
 }
 
-export default CreateListing
+export default EditListing
