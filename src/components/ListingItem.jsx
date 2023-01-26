@@ -6,7 +6,7 @@ import bedIcon from '../assets/svg/bedIcon.svg'
 import bathtubIcon from '../assets/svg/bathtubIcon.svg'
 
 function ListingItem({listing, id, onDelete, onEdit}) {
-  console.log(listing)
+  // console.log(listing)
   return (
     <li className="categoryListing">
       <Link

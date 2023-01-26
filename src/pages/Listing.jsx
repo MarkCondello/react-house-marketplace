@@ -30,7 +30,7 @@ function Listing() {
       const docRef = doc(db, 'listings', params.listingId),
       docSnapshot = await getDoc(docRef)
       if (docSnapshot.exists()) {
-        console.log(docSnapshot.data())
+        // console.log(docSnapshot.data())
         setListing(docSnapshot.data())
         setLoading(false)
       }

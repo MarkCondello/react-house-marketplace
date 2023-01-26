@@ -64,7 +64,7 @@ function CreateListing() {
       geolocation.lng = longitude
       // location = address // not returning an address consistently
     }
-    console.log({geolocation, location})
+    // console.log({geolocation, location})
 
     //store image in firebase
     const storeImage = async (image) => {

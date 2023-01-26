@@ -33,7 +33,7 @@ function Slider() {
         })
       })
       setListings(listings)
-      console.log(listings)
+      // console.log(listings)
       setLoading(false)
     }
     getListings()

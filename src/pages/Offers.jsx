@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 // Depts to get data start
-import { collection, getDocs, query, where, orderBy, limit, startAfter } from 'firebase/firestore'
+import { collection, getDocs, query, where, orderBy, limit, startAfter, getCountFromServer } from 'firebase/firestore'
 import { db } from '../firebase.config'
 // Depts to get data end
 import { toast } from 'react-toastify'
@@ -10,6 +10,7 @@ import ListingItem from '../components/ListingItem'
 function Offers() {
   const [lastFetchedListing, setLastFetchedListing] = useState(null),
   [listings, setListings] = useState(null),
+  [listingCount, setListingCount] = useState(null),
   [loading, setLoading] = useState(null),
    // Pagination / load More
    onLoadMoreListings = async () => {
@@ -24,9 +25,7 @@ function Offers() {
       ), // query to firebase
       querySnapshot = await getDocs(queryParams), // returns a collection
       lastVisible = querySnapshot.docs[querySnapshot.docs.length -1]
-      
       setLastFetchedListing(lastVisible)
-      
       const listings = []
       
       querySnapshot.forEach(doc => {
@@ -56,8 +55,15 @@ function Offers() {
         ), // query to firebase
         querySnapshot = await getDocs(queryParams), // returns a collection
         lastVisible = querySnapshot.docs[querySnapshot.docs.length -1]
-        console.log({lastVisible})
+        // console.log({lastVisible})
         setLastFetchedListing(lastVisible)
+
+
+        const countQuerySnapshot = await getCountFromServer(
+          query(listingRef, where('offer', '==', true))
+        )
+        // console.log('listings offers listing count: ', countQuerySnapshot.data().count);
+        setListingCount(countQuerySnapshot.data().count)
 
         const listings = []
         
@@ -88,7 +94,7 @@ function Offers() {
           <ListingItem key={listing.id} listing={listing.data} id={listing.id} />
         ))}
       </ul>
-      {lastFetchedListing && (
+      {listings.length < listingCount && (
       <button className="loadMore" onClick={onLoadMoreListings}>Load more</button>
       )}
     </main>

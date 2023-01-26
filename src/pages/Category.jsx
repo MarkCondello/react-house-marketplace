@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 // Depts to get data start
-import { collection, getDocs, query, where, orderBy, limit, startAfter } from 'firebase/firestore'
+import { collection, getDocs, query, where, orderBy, limit, startAfter, getCountFromServer } from 'firebase/firestore'
 import { db } from '../firebase.config'
 // Depts to get data end
 import { toast } from 'react-toastify'
@@ -11,6 +11,7 @@ import ListingItem from '../components/ListingItem'
 function Category() {
   const [lastFetchedListing, setLastFetchedListing] = useState(null),
   [listings, setListings] = useState(null),
+  [listingCount, setListingCount] = useState(null),
   [loading, setLoading] = useState(null),
   params = useParams(),
   // Pagination / load More
@@ -57,8 +58,13 @@ function Category() {
         ), // query to firebase
         querySnapshot = await getDocs(queryParams), // returns a collection
         lastVisible = querySnapshot.docs[querySnapshot.docs.length -1]
-        
         setLastFetchedListing(lastVisible)
+
+        const countQuerySnapshot = await getCountFromServer(
+          query(listingRef, where('type', '==', params.categoryName))
+        )
+        // console.log('listings `count: ', countQuerySnapshot.data().count);
+        setListingCount(countQuerySnapshot.data().count)
 
         const listings = []
         
@@ -91,7 +97,7 @@ function Category() {
           <ListingItem key={listing.id} listing={listing.data} id={listing.id} />
         ))}
       </ul>
-      {lastFetchedListing && (
+      {listings.length < listingCount && (
       <button className="loadMore" onClick={onLoadMoreListings}>Load more</button>
       )}
     </main>

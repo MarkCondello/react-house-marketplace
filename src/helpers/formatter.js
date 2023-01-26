@@ -1,6 +1,6 @@
 export const Formatter = {
   stripNonIntegers(value){
-    return value.toString().replace(/[^0-9\.]/g, '')
+    return value.toString().replace(/[^0-9.]/g, '')
   },
   formatToDecimal(value, decimalsPlaces = 2) {
     return new Intl.NumberFormat('en-AU', {

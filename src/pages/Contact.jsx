@@ -7,9 +7,11 @@ import { db } from '../firebase.config'
 import { toast } from 'react-toastify'
 
 function Contact() {
+  // eslint-disable-next-line
   const [message, setMessage] = useState(''),
-  [landlord, setLandlord] = useState(null),
-  [searchParams, setSearchParams] = useSearchParams(),
+  [landlord, setLandlord] = useState(null)
+  // eslint-disable-next-line
+  const [searchParams, setSearchParams] = useSearchParams(),
   params = useParams(),
   onChange = (event) => {
     setMessage(event.target.value)
@@ -20,7 +22,7 @@ function Contact() {
       const docRef = doc(db, 'users', params.landlordId),
       docSnapshot = await getDoc(docRef)
       if (docSnapshot.exists()) {
-        console.log(docSnapshot.data())
+        // console.log(docSnapshot.data())
         setLandlord(docSnapshot.data())
       } else {
         toast.error('Could not get landlord.')
