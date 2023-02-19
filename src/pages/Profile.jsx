@@ -17,7 +17,9 @@ function Profile() {
   navigate = useNavigate(),
   [changeDetails, setChangeDetails] = useState(false),
   [listings, setListings] = useState(null),
+  [messages, setMessages] = useState(null),
   [loading, setLoading] = useState(true),
+  // [messages, setMessages] = useState(null),
   [formData, setFormData] = useState({
     name: auth.currentUser.displayName,
     email: auth.currentUser.email,
@@ -63,6 +65,7 @@ function Profile() {
     }
   },
   onEdit = (listingId) => {
+    console.log('reached onEdit', {listingId})
     navigate(`/edit-listing/${listingId}`)
   },
   { name, email} = formData
@@ -73,10 +76,10 @@ function Profile() {
       listingsQuery = query(
         listingsRef,
         where('userRef', '==', auth.currentUser.uid),
+        // groupBy('listing'), // not a thing
         orderBy('timestamp', 'desc')
       ),
       querySnapshot = await getDocs(listingsQuery)
-
       let listings = []
       querySnapshot.forEach((doc) => {
         return listings.push({
@@ -84,12 +87,30 @@ function Profile() {
           data: doc.data()
         })
       })
-
       setListings(listings)
-      setLoading(false)
+    },
+    fetchUsersMessages = async () => {
+      const messagesRef = collection(db, 'messages'),
+      messagesQuery = query(
+        messagesRef,
+        where('recipientEmail', '==', auth.currentUser.email),
+        orderBy('timestamp', 'desc')
+      ),
+      querySnapshot = await getDocs(messagesQuery)
+      let messagesList = []
+      querySnapshot.forEach((doc) => {
+        return messagesList.push({
+          id: doc.id,
+          data: doc.data()
+        })
+      })
+      setMessages(messagesList)
     }
+
+    fetchUsersMessages()
     fetchUsersListings()
-  }, [auth.currentUser.uid])
+    setLoading(false)
+  }, [auth.currentUser.uid, auth.currentUser.email])
 
   if (loading) {
     return <Spinner />
@@ -140,6 +161,21 @@ function Profile() {
           { listings.map((listing) => (
             <ListingItem key={listing.id} listing={listing.data} id={listing.id} onDelete={()=> onDelete(listing.id)} onEdit={()=> onEdit(listing.id)}/>
           ))}
+        </ul>
+        </>
+      )}
+
+      {!loading && messages && (
+        <>
+        <p className="listingText">Your messages</p>
+        <ul className="">
+          {/* Needs styling and way to reply to message */}
+          { messages.map((message) => 
+            <li key={message.id}>
+              <h3>{message.data.listing}</h3>
+              <p>{message.data.message}</p>
+            </li>
+          )}
         </ul>
         </>
       )}

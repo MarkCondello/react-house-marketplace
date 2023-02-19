@@ -42,7 +42,6 @@ function Offers() {
     }
   }
 
-
   useEffect(() => {
     const fetchListing = async () => {
       try {
