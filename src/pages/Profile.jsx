@@ -64,8 +64,8 @@ function Profile() {
       toast.success('Succesfully deleted listing.')
     }
   },
-  onEdit = (listingId) => {
-    console.log('reached onEdit', {listingId})
+  onEditHere = (listingId) => {
+    console.log('reached onEditHere', {listingId})
     navigate(`/edit-listing/${listingId}`)
   },
   { name, email} = formData
@@ -91,9 +91,8 @@ function Profile() {
     },
     fetchUsersMessages = async () => {
       const messagesRef = collection(db, 'messages'),
-      messagesQuery = query(
-        messagesRef,
-        where('recipientEmail', '==', auth.currentUser.email),
+      messagesQuery = query(messagesRef,
+        where('userRef', '==', auth.currentUser.uid),
         orderBy('timestamp', 'desc')
       ),
       querySnapshot = await getDocs(messagesQuery)
@@ -159,7 +158,13 @@ function Profile() {
         <p className="listingText">Your listings</p>
         <ul className="listingDetailsList">
           { listings.map((listing) => (
-            <ListingItem key={listing.id} listing={listing.data} id={listing.id} onDelete={()=> onDelete(listing.id)} onEdit={()=> onEdit(listing.id)}/>
+            <ListingItem
+              key={listing.id}
+              listing={listing.data}
+              id={listing.id}
+              onDelete={()=> onDelete(listing.id)}
+              onEdit={() => onEditHere(listing.id)}
+            />
           ))}
         </ul>
         </>
@@ -169,16 +174,22 @@ function Profile() {
         <>
         <p className="listingText">Your messages</p>
         <ul className="">
-          {/* Needs styling and way to reply to message */}
+          {/* Needs styling */}
           { messages.map((message) => 
-            <li key={message.id}>
-              <h3>{message.data.listing}</h3>
-              <p>{message.data.message}</p>
+            <li className="categoryListing" key={message.id}>
+              <Link to={`/contact/${message.data.userRef}?listingName=${message.data.listing}&replyMessage=yes`}>
+                <div className="categoryListingDetails">
+                  <h3>{message.data.listing}</h3>
+                  <p>{message.data.message}</p>
+                  <p>{message.data.senderEmail}</p>
+                </div>
+              </Link>
             </li>
           )}
         </ul>
         </>
       )}
+      
     </main>
   </div>)
 }

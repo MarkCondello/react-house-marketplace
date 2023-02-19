@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { Formatter } from '../helpers/formatter'
 import { ReactComponent as DeleteIcon } from '../assets/svg/deleteIcon.svg'
-import { ReactComponent as EditIcon } from '../assets/svg/editIcon.svg'
+// import { ReactComponent as EditIcon } from '../assets/svg/editIcon.svg'
 import bedIcon from '../assets/svg/bedIcon.svg'
 import bathtubIcon from '../assets/svg/bathtubIcon.svg'
 
@@ -25,16 +25,17 @@ function ListingItem({listing, id, onDelete, onEdit}) {
               <p className="categoryListingInfoText">{listing.bedrooms > 1 ? `${listing.bedrooms} bedrooms` : `${listing.bedrooms} bedroom`}</p>
               <img src={bathtubIcon} alt="Bath icon." />
               <p className="categoryListingInfoText">{listing.bathrooms > 1 ? `${listing.bathrooms} bathrooms` : `${listing.bathrooms} bathroom`}</p>
-
             </div>
           </div>
       </Link>
       {/* Need to add the onDelete from Category */}
       {onDelete && (
-        <DeleteIcon className="removeIcon" fill="rgb(321, 76, 60)" onClick={()=> onDelete(id, listing.name)}/>
+        <DeleteIcon className="removeIcon" fill="rgb(321, 76, 60)" onClick={() => onDelete(id, listing.name)}/>
       )}
+      {/* THis route does not get redirected to the EditListing component */}
       {onEdit && (
-        <EditIcon className="editIcon" onClick={()=> onEdit(id)}/>
+        <Link to={`/edit-listing/${id}`}>Edit new</Link>
+        // <EditIcon className="editIcon" onClick={() => onEdit(id)} />
       )}
     </li>
   );

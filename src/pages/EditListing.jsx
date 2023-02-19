@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 // depts required for auth and storage start
-import { getAuth, onAuthStateChanged } from 'firebase/auth'
+import { getAuth } from 'firebase/auth'
+// import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"
 import { serverTimestamp, doc, updateDoc, getDoc } from 'firebase/firestore'
 import { db } from '../firebase.config'
@@ -15,7 +16,7 @@ function EditListing() {
   // eslint-disable-next-line
   const [geoLocationEnabled, setGeoLocationEnabled] = useState(true),
   [loading, setLoading] = useState(false),
-  [listing, setListing] = useState(false),
+  // [listing, setListing] = useState(false),
   [formData, setFormData] = useState({
     type: 'rent',
     name: '',
@@ -149,45 +150,68 @@ function EditListing() {
   }
 
   //sets userRef to logged in user
-  useEffect(() => {
-    if (isMounted) {
-      onAuthStateChanged(auth, (user) => {
-        if (user) {
-          setFormData({...formData, userRef: user.uid})
-        } else {
-          navigate('/sign-in')
-        }
-      })
-    }
-    return () => {
-      isMounted.current = false
-    }
-  },[isMounted, formData, auth, navigate])
+  // useEffect(() => {
+  //   if (isMounted) {
+  //     onAuthStateChanged(auth, (user) => {
+  //       if (user) {
+  //         setFormData({...formData, userRef: user.uid})
+  //       } else {
+  //         navigate('/sign-in')
+  //       }
+  //     })
+  //   }
+  //   return () => {
+  //     isMounted.current = false
+  //   }
+  // },[isMounted, formData, auth, navigate])
 
   //fetch listing to edit
   useEffect(() => {
+    // console.log({currentUser: auth.currentUser})
+    // if (listing && listing.userRef !== auth.currentUser?.uid) {
+    //   toast.error('You can not edit this listing.')
+    //   navigate('/')
+    // }
+    // if (isMounted) {
+    //   onAuthStateChanged(auth, (user) => {
+    //     if (user) {
+    //       setFormData({...formData, userRef: user.uid})
+    //     } else {
+    //       navigate('/sign-in')
+    //     }
+    //   })
+    // }
+
     setLoading(true)
     const fetchListing = async () => {
-      const docRef = doc(db, 'listings', params.listingId),
-      docSnapshot = await getDoc(docRef)
+      const docRef = doc(db, 'listings', params.listingId)
+      // console.log('reached fetchListing in useEffect, docRef', docRef)
+      const docSnapshot = await getDoc(docRef)
+
       if (docSnapshot.exists) {
-        setListing(docSnapshot.data())
+        // setListing(docSnapshot.data())
         setFormData({...docSnapshot.data(), address: docSnapshot.data().location})
-        setLoading(false)
+        console.log('reached fetchListing in useEffect, data', docSnapshot.data())
+
       } else {
         navigate('/')
         toast.error('Listing does not exist')
       }
+      setLoading(false)
+
     }
     fetchListing()
-  }, [params.listingId, navigate])
-
-  useEffect(()=>{
-    if (listing && listing.userRef !== auth.currentUser.uid) {
-      toast.error('You can not edit this listing.')
-      navigate('/')
+    return () => {
+      isMounted.current = false
     }
-  }, [navigate, auth.currentUser.uid, listing])
+  }, [params.listingId, navigate, auth.currentUser.uid, isMounted, formData, auth,])
+
+  // useEffect(()=>{
+  //   if (listing && listing.userRef !== auth.currentUser.uid) {
+  //     toast.error('You can not edit this listing.')
+  //     navigate('/')
+  //   }
+  // }, [navigate, auth.currentUser.uid, listing])
 
   if (loading) {
     return <Spinner />

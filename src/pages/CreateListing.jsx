@@ -11,6 +11,10 @@ import { useNavigate } from 'react-router-dom'
 import Spinner from '../components/Spinner'
 import { toast } from 'react-toastify'
 
+import { getAnalytics, logEvent } from "firebase/analytics";
+
+const analytics = getAnalytics();
+
 function CreateListing() {
   // eslint-disable-next-line
   const [geoLocationEnabled, setGeoLocationEnabled] = useState(true),
@@ -120,6 +124,13 @@ function CreateListing() {
     const docRef = await addDoc(collection(db, 'listings'), formDataCopy)
     setLoading(false)
     toast.success('Listing saved')
+
+    logEvent(analytics, 'new_listing', {
+      content_type: 'listing',
+      content_id: docRef.id,
+      listing_title: formData.name,
+    });
+
     navigate(`/category/${formDataCopy.type}/${docRef.id}`)
   },
   onMutate = (event) => {

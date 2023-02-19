@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useSearchParams, useParams } from 'react-router-dom'
 
+import { getAuth } from 'firebase/auth'
+
 import { getDoc, addDoc, doc, serverTimestamp, collection } from 'firebase/firestore'
 import { db } from '../firebase.config'
 
@@ -19,7 +21,7 @@ function Contact() {
   [loading, setLoading] = useState(false),
   // eslint-disable-next-line
   [searchParams, setSearchParams] = useSearchParams(),
-
+  auth = getAuth(),
   params = useParams(),
   navigate = useNavigate(),
   onMutate = (event) => {
@@ -34,17 +36,15 @@ function Contact() {
       setLoading(true)
       const messageDetails = {
         listing: searchParams.get('listingName'),
-        recipientEmail: landlord.email,
+        userRef: landlord.userRef,
         timestamp: serverTimestamp(),
         ...formData
       }
       console.log({ messageDetails })
-      // console.log({imgUrls})
       await addDoc(collection(db, 'messages'), messageDetails)
       toast.success('Message sent')
      } catch(err) {
       toast.error('There was an issue sending your message')
-
     }
     setLoading(false)
     navigate('/')
@@ -56,9 +56,10 @@ function Contact() {
     const getLandlord = async () => {
       const docRef = doc(db, 'users', params.landlordId),
       docSnapshot = await getDoc(docRef)
+
       if (docSnapshot.exists()) {
         // console.log(docSnapshot.data())
-        setLandlord(docSnapshot.data())
+        setLandlord({...docSnapshot.data(), userRef: docRef.id})
       } else {
         toast.error('Could not get landlord.')
       }
@@ -68,13 +69,20 @@ function Contact() {
   if (loading) {
     return <Spinner />
   }
-  return <div className="pageContainer">
-    <header><p className="pageHeader">Contact landlord</p></header>
+
+return <div className="pageContainer">
+    <header>
+      <p className="pageHeader">
+        { searchParams.get('replyMessage') && searchParams.get('replyMessage') !== 'yes' ? 'Contact landlord' : `Reply to ${landlord?.name}` }
+      </p>
+    </header>
     {landlord !== null && (
       <main>
+        { !searchParams.get('replyMessage') &&
         <div className="contactLandlord">
           <p className="landlordName">Contact: {landlord?.name}</p>
         </div>
+        }
         <form className="messageForm">
           <label htmlFor="senderEmail" className="formLabel">Your email:</label>
           <input
