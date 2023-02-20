@@ -1,1 +1,2 @@
-- edit route for profile is not working
+- [] show the images uploaded to the listing in the edit screen and choose to delete them
+- [X] edit route for profile is not working

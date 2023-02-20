@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 // depts required for auth and storage start
 import { getAuth } from 'firebase/auth'
 // import { getAuth, onAuthStateChanged } from 'firebase/auth'
@@ -35,7 +35,7 @@ function EditListing() {
   auth = getAuth(),
   navigate = useNavigate(),
   params = useParams(),
-  isMounted = useRef(true),
+  // isMounted = useRef(true),
   {type, name, bedrooms, bathrooms, parking, furnished, address, offer, regularPrice, discountedPrice, images, latitude, longitude} = formData,
   onSubmit = async (event) => {
     event.preventDefault()
@@ -149,22 +149,6 @@ function EditListing() {
     }
   }
 
-  //sets userRef to logged in user
-  // useEffect(() => {
-  //   if (isMounted) {
-  //     onAuthStateChanged(auth, (user) => {
-  //       if (user) {
-  //         setFormData({...formData, userRef: user.uid})
-  //       } else {
-  //         navigate('/sign-in')
-  //       }
-  //     })
-  //   }
-  //   return () => {
-  //     isMounted.current = false
-  //   }
-  // },[isMounted, formData, auth, navigate])
-
   //fetch listing to edit
   useEffect(() => {
     // console.log({currentUser: auth.currentUser})
@@ -173,7 +157,7 @@ function EditListing() {
     //   navigate('/')
     // }
     // if (isMounted) {
-    //   onAuthStateChanged(auth, (user) => {
+    //   onAuthStateChanged(auth, (user) => { // I think this checks if the user has logged into another account????
     //     if (user) {
     //       setFormData({...formData, userRef: user.uid})
     //     } else {
@@ -185,33 +169,25 @@ function EditListing() {
     setLoading(true)
     const fetchListing = async () => {
       const docRef = doc(db, 'listings', params.listingId)
-      // console.log('reached fetchListing in useEffect, docRef', docRef)
       const docSnapshot = await getDoc(docRef)
 
-      if (docSnapshot.exists) {
-        // setListing(docSnapshot.data())
-        setFormData({...docSnapshot.data(), address: docSnapshot.data().location})
-        console.log('reached fetchListing in useEffect, data', docSnapshot.data())
+      if (docSnapshot.exists && docSnapshot.data()) {
+        const listingData = docSnapshot.data()
 
+        if (listingData.userRef !== auth.currentUser.uid) {
+          toast.error('You can not edit this listing.')
+          navigate('/')
+        }
+        setFormData({...listingData, address: listingData.location})
+        // console.log('reached fetchListing in useEffect, data', listingData)
       } else {
         navigate('/')
         toast.error('Listing does not exist')
       }
       setLoading(false)
-
     }
     fetchListing()
-    return () => {
-      isMounted.current = false
-    }
-  }, [params.listingId, navigate, auth.currentUser.uid, isMounted, formData, auth,])
-
-  // useEffect(()=>{
-  //   if (listing && listing.userRef !== auth.currentUser.uid) {
-  //     toast.error('You can not edit this listing.')
-  //     navigate('/')
-  //   }
-  // }, [navigate, auth.currentUser.uid, listing])
+  }, [params.listingId, auth, navigate])
 
   if (loading) {
     return <Spinner />
