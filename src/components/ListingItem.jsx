@@ -1,11 +1,11 @@
 import { Link } from 'react-router-dom'
 import { Formatter } from '../helpers/formatter'
 import { ReactComponent as DeleteIcon } from '../assets/svg/deleteIcon.svg'
-// import { ReactComponent as EditIcon } from '../assets/svg/editIcon.svg'
+import { ReactComponent as EditIcon } from '../assets/svg/editIcon.svg'
 import bedIcon from '../assets/svg/bedIcon.svg'
 import bathtubIcon from '../assets/svg/bathtubIcon.svg'
 
-function ListingItem({listing, id, onDelete, onEdit}) {
+function ListingItem({listing, id, onDelete, onEdit, children}) {
   // console.log(listing)
   return (
     <li className="categoryListing">
@@ -32,11 +32,10 @@ function ListingItem({listing, id, onDelete, onEdit}) {
       {onDelete && (
         <DeleteIcon className="removeIcon" fill="rgb(321, 76, 60)" onClick={() => onDelete(id, listing.name)}/>
       )}
-      {/* THis route does not get redirected to the EditListing component */}
       {onEdit && (
-        <Link to={`/edit-listing/${id}`}>Edit new</Link>
-        // <EditIcon className="editIcon" onClick={() => onEdit(id)} />
+        <EditIcon className="editIcon" onClick={() => onEdit(id)} />
       )}
+      {children}
     </li>
   );
 }

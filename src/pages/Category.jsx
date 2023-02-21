@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import { getAuth } from 'firebase/auth'
+import { useNavigate } from 'react-router-dom'
+
 // Depts to get data start
-import { collection, getDocs, query, where, orderBy, limit, startAfter, getCountFromServer } from 'firebase/firestore'
+import { collection, getDocs, deleteDoc, doc, query, where, orderBy, limit, startAfter, getCountFromServer } from 'firebase/firestore'
 import { db } from '../firebase.config'
 // Depts to get data end
 import { toast } from 'react-toastify'
@@ -9,11 +12,25 @@ import Spinner from '../components/Spinner'
 import ListingItem from '../components/ListingItem'
 
 function Category() {
-  const [lastFetchedListing, setLastFetchedListing] = useState(null),
+  const auth = getAuth(),
+  navigate = useNavigate(),
+
+  [lastFetchedListing, setLastFetchedListing] = useState(null),
   [listings, setListings] = useState(null),
   [listingCount, setListingCount] = useState(null),
   [loading, setLoading] = useState(null),
   params = useParams(),
+  onEdit = (listingId) => {
+    navigate(`/edit-listing/${listingId}`)
+  },
+  onDelete = async (listingId) => {
+    if (window.confirm('Are you sure you want to delete this listing?')) {
+      await deleteDoc(doc(db, 'listings', listingId))
+      const updatedListings = listings.filter((listing) => listing.id !== listingId)
+      setListings(updatedListings)
+      toast.success('Succesfully deleted listing.')
+    }
+  },
   // Pagination / load More
   onLoadMoreListings = async () => {
     try {
@@ -29,9 +46,7 @@ function Category() {
       lastVisible = querySnapshot.docs[querySnapshot.docs.length -1]
       
       setLastFetchedListing(lastVisible)
-      
       const listings = []
-      
       querySnapshot.forEach(doc => {
         return listings.push({
           id: doc.id,
@@ -65,9 +80,7 @@ function Category() {
         )
         // console.log('listings `count: ', countQuerySnapshot.data().count);
         setListingCount(countQuerySnapshot.data().count)
-
         const listings = []
-        
         querySnapshot.forEach(doc => {
           return listings.push({
             id: doc.id,
@@ -94,7 +107,19 @@ function Category() {
     <main>
       <ul className="categoryListings">
         {listings.map(listing => (
-          <ListingItem key={listing.id} listing={listing.data} id={listing.id} />
+          <ListingItem
+            key={listing.id}
+            listing={listing.data}
+            id={listing.id}
+            {
+              ...listing.data.userRef === auth.currentUser.uid &&
+              {
+                onEdit: () => onEdit(listing.id),
+                onDelete: () => onDelete(listing.id)
+              }
+            }
+          >
+          </ListingItem>
         ))}
       </ul>
       {listings.length < listingCount && (

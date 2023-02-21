@@ -1,15 +1,19 @@
 import { useState, useEffect } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Link, redirect, useNavigate, useParams } from 'react-router-dom'
 
-import { getDoc, doc } from 'firebase/firestore'
+import { getDoc, doc, deleteDoc } from 'firebase/firestore'
 import { getAuth } from 'firebase/auth'
 import { db } from '../firebase.config'
 
 import { Formatter } from '../helpers/formatter.js'
 import Spinner from '../components/Spinner'
 import shareIcon from '../assets/svg/shareIcon.svg'
+import { ReactComponent as EditIcon } from '../assets/svg/editIcon.svg'
+import { ReactComponent as DeleteIcon } from '../assets/svg/deleteIcon.svg'
 
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet'
+
+import { toast } from 'react-toastify'
 
 // Swiper deps
 import SwiperCore, {Navigation, Pagination, Scrollbar, A11y } from 'swiper'
@@ -23,7 +27,19 @@ function Listing() {
   [shareLinkCopied, setshareLinkCopied] = useState(false),
   navigate = useNavigate(),
   params = useParams(),
-  auth = getAuth()
+  auth = getAuth(),
+  onEdit = () => {
+    console.log('Reached onEdit in Listing.jsx', params.listingId)
+    navigate(`/edit-listing/${params.listingId}`)
+  },
+  
+  onDelete = async (listingId) => {
+    if (window.confirm('Are you sure you want to delete this listing?')) {
+      await deleteDoc(doc(db, 'listings', listingId))
+      redirect('/')
+      toast.success('Succesfully deleted listing.')
+    }
+  }
 
   useEffect(() => {
     const fetchListing = async () => {
@@ -33,6 +49,8 @@ function Listing() {
         // console.log(docSnapshot.data())
         setListing(docSnapshot.data())
         setLoading(false)
+      } else {
+        redirect('/')
       }
     }
     fetchListing()
@@ -42,19 +60,21 @@ function Listing() {
     return <Spinner />
   }
   return <main>
-    {/* <p>Imgs ({listing.imgUrls.length})</p>
-    <div className="swiperSlideDiv" style={{backgroundImage: `url(${listing.imgUrls[0]})`, backgroundSize: 'cover'}}></div> */}
 
   <Swiper slidesPerView={1} pagination={{clickable: true}} className="swiperSlider">
-    {listing.imgUrls.map((url, index)=>{
-     return <SwiperSlide key={index}>
-        <div
-          className="swiperSlideDiv"
-          style={{backgroundImage: `url(${listing.imgUrls[0]})`, backgroundSize: 'cover', backgroundPosition: 'center'}}
+    {Object.values(listing.imgUrls).map((url, index) =>
+    <>
+    <p>{url}</p>
+    <SwiperSlide key={index}>
+      <div
+        className="swiperSlideDiv"
+        style={{backgroundImage: `url(${listing.imgUrls[0]})`, backgroundSize: 'cover', backgroundPosition: 'center'}}
         ></div>
       </SwiperSlide>
-    })}
+    </>
+    )}
   </Swiper>
+
   <div className="shareIconDiv" onClick={() => {
     navigator.clipboard.writeText(window.location.href)
     setshareLinkCopied(true)
@@ -64,7 +84,16 @@ function Listing() {
     }}>
       <img src={shareIcon} alt="Shar icon." />
     </div>
+
+    { auth.currentUser?.uid === listing.userRef &&
+    <>
+      <div className="editIconDiv"><EditIcon onClick={() => onEdit()} /></div>
+      <div className="deleteIconDiv"><DeleteIcon onClick={() => onDelete()} /></div>
+    </>
+    }
+    
     {shareLinkCopied && <p className='linkCopied'>Link copied</p>}
+
     <div className="listingDetails">
       <p className="listingName">{listing.name} - {listing.offer ? Formatter.formatToMoney(listing.discountedPrice) : Formatter.formatToMoney(listing.regularPrice)}</p>
       <p className="listingLocation">{listing.location}</p>

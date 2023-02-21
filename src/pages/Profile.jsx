@@ -12,6 +12,8 @@ import homeIcon from '../assets/svg/homeIcon.svg'
 import Spinner from '../components/Spinner'
 import ListingItem from '../components/ListingItem'
 
+import emailIcon from '../assets/svg/emailIcon.svg'
+
 function Profile() {
   const auth = getAuth(),
   navigate = useNavigate(),
@@ -54,8 +56,8 @@ function Profile() {
         [event.target.id]: event.target.value
       })
     )
-
   },
+  //onDelete and onEdit are used in Category as well
   onDelete = async (listingId) => {
     if (window.confirm('Are you sure you want to delete this listing?')) {
       await deleteDoc(doc(db, 'listings', listingId))
@@ -64,8 +66,8 @@ function Profile() {
       toast.success('Succesfully deleted listing.')
     }
   },
-  onEditHere = (listingId) => {
-    console.log('reached onEditHere', {listingId})
+  onEdit = (listingId) => {
+    // console.log('reached onEditHere', {listingId})
     navigate(`/edit-listing/${listingId}`)
   },
   { name, email} = formData
@@ -163,33 +165,32 @@ function Profile() {
               listing={listing.data}
               id={listing.id}
               onDelete={()=> onDelete(listing.id)}
-              onEdit={() => onEditHere(listing.id)}
+              onEdit={() => onEdit(listing.id)}
             />
           ))}
         </ul>
         </>
       )}
-
-      {!loading && messages && (
+{/* Not sure about checking the length. It shows the length when there is none I think. */}
+      {!loading && messages?.length && (
         <>
         <p className="listingText">Your messages</p>
-        <ul className="">
+        <ul className="profileMessages">
           {/* Needs styling */}
           { messages.map((message) => 
-            <li className="categoryListing" key={message.id}>
-              <Link to={`/contact/${message.data.userRef}?listingName=${message.data.listing}&replyMessage=yes`}>
-                <div className="categoryListingDetails">
+            <li key={message.id}>
+              <Link className="profileMessage" to={`/contact/${message.data.userRef}?listingName=${message.data.listing}&replyMessage=yes`}>
+                <div>
                   <h3>{message.data.listing}</h3>
-                  <p>{message.data.message}</p>
-                  <p>{message.data.senderEmail}</p>
+                  <p>{message.data.message.length > 40 ? message.data.message.substring(0, 40) + '...' : message.data.message}</p>
                 </div>
+                <img width="25px" src={emailIcon} title={message.data.senderEmail} alt="email icon."/>
               </Link>
             </li>
           )}
         </ul>
         </>
       )}
-      
     </main>
   </div>)
 }

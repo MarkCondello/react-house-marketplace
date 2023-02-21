@@ -29,6 +29,7 @@ function EditListing() {
     regularPrice: 0,
     discountedPrice: 0,
     images: {},
+    imgUrls: {},
     latitude: 0,
     longitude: 0,
   }),
@@ -44,6 +45,7 @@ function EditListing() {
       setLoading(false)
       toast.error('Discounted price needs to be less than regular price.')
     }
+    //ToDo: need to check if the existing images plus images is greater than 6
     if (images.length > 6) {
       setLoading(false)
       toast.error('Max 6 images')
@@ -67,7 +69,6 @@ function EditListing() {
       geolocation.lng = longitude
       // location = address // not returning an address consistently
     }
-    // console.log({geolocation, location})
 
     //store image in firebase
     const storeImage = async (image) => {
@@ -100,13 +101,24 @@ function EditListing() {
       })
     }
 
+    console.log({images})
     const imgUrls = await Promise.all(
       [...images].map((image) => storeImage(image))
     ).catch(()=>{
       setLoading(false)
       toast.error('Something went wrong while uploading images.')
-    }),
-    formDataCopy = {
+    })
+    //const imgUrlMap = new Map()
+    // Object.values(formData.imgUrls).forEach(imgUrl => {
+    //   imgUrlMap.set(imgUrl)
+    // })
+    // Object.values(imgUrls).forEach(imgUrl => {
+    //   imgUrlMap.set(imgUrl)
+    // })
+    // // console.log({imgURLS: Object.fromEntries(imgUrlMap)})
+    // const convertedImgUrls = Object.fromEntries(imgUrlMap)
+ 
+    const formDataCopy = {
       ...formData,
       imgUrls,
       geolocation,
@@ -118,14 +130,12 @@ function EditListing() {
     // location && (formDataCopy.location = location)  // not returning an address consistently
     formDataCopy.location = address
     !formDataCopy.offer && delete formDataCopy.discountedPrice
-
-    console.log({imgUrls})
-    // const docRef = await addDoc(collection(db, 'listings'), formDataCopy)
+    console.log({formDataCopy})
     const docRef = doc(db, 'listings', params.listingId)
     await updateDoc(docRef, formDataCopy)
     setLoading(false)
     toast.success('Listing was updated.')
-    navigate(`/category/${formDataCopy.type}/${docRef.id}`)
+    // navigate(`/category/${formDataCopy.type}/${docRef.id}`)
   },
   onMutate = (event) => {
     let boolean = null
@@ -168,8 +178,8 @@ function EditListing() {
 
     setLoading(true)
     const fetchListing = async () => {
-      const docRef = doc(db, 'listings', params.listingId)
-      const docSnapshot = await getDoc(docRef)
+      const docRef = doc(db, 'listings', params.listingId),
+      docSnapshot = await getDoc(docRef)
 
       if (docSnapshot.exists && docSnapshot.data()) {
         const listingData = docSnapshot.data()
@@ -178,6 +188,7 @@ function EditListing() {
           toast.error('You can not edit this listing.')
           navigate('/')
         }
+        console.log({listingData})
         setFormData({...listingData, address: listingData.location})
         // console.log('reached fetchListing in useEffect, data', listingData)
       } else {
@@ -382,6 +393,18 @@ function EditListing() {
           multiple
           required
         />
+        <ul className="listingImages">
+          {Object.values(formData.imgUrls).map((imgUrl, index) => (
+            <li
+              key={index}
+              style={{height: '100px',backgroundImage: `url(${imgUrl})`, backgroundSize: 'cover', backgroundPosition: 'center'}}
+            >
+              {/* Add delete icon */}
+            </li>
+          ))
+          }
+        </ul>
+  
         <button
           type="submit"
           className='primaryButton createListingButton'

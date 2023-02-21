@@ -486,7 +486,8 @@ button {
 .listingDetails {
   margin-bottom: 10rem;
 }
-
+.deleteIconDiv,
+.editIconDiv,
 .shareIconDiv {
   cursor: pointer;
   position: fixed;
@@ -502,6 +503,12 @@ button {
   align-items: center;
 }
 
+.editIconDiv {
+  top: calc(3% + 3.15rem);
+}
+.deleteIconDiv {
+  top: calc(3% + 6.25rem);
+}
 .listingName {
   font-weight: 600;
   font-size: 1.5rem;
@@ -819,4 +826,46 @@ button {
   margin-left: 1rem;
   font-size: 0.8rem;
   opacity: 0.75;
+}
+
+.profileMessages {
+  list-style: none;
+  padding: 0;
+  /* display: grid; */
+  /* grid-template-columns: repeat(6, minmax(0, 1fr)); */
+}
+
+.profileMessage {
+  align-items: center;
+  background-color: #fff;
+  border-radius: 4px;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  transition: background-color .4s;
+}
+.profileMessage:hover {
+  background-color: rgb(226, 226, 226);
+}
+.profileMessage h3,
+.profileMessage p {
+  margin: 0;
+}
+.profileMessage h3 {
+  width: 33%;
+}
+
+.profileMessage > div {
+  align-items: center;
+  display: flex;
+  width: 80%;
+}
+
+.listingImages {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
 }
