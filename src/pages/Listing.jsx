@@ -29,10 +29,8 @@ function Listing() {
   params = useParams(),
   auth = getAuth(),
   onEdit = () => {
-    console.log('Reached onEdit in Listing.jsx', params.listingId)
     navigate(`/edit-listing/${params.listingId}`)
   },
-  
   onDelete = async (listingId) => {
     if (window.confirm('Are you sure you want to delete this listing?')) {
       await deleteDoc(doc(db, 'listings', listingId))

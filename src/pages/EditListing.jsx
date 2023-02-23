@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import { getAuth } from 'firebase/auth'
 // import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"
-import { serverTimestamp, doc, updateDoc, getDoc } from 'firebase/firestore'
+import { serverTimestamp, doc, updateDoc, getDoc, collection } from 'firebase/firestore'
 import { db } from '../firebase.config'
 // depts required for auth and storage end
 
@@ -101,7 +101,6 @@ function EditListing() {
       })
     }
 
-    console.log({images})
     const imgUrls = await Promise.all(
       [...images].map((image) => storeImage(image))
     ).catch(()=>{
@@ -120,7 +119,7 @@ function EditListing() {
  
     const formDataCopy = {
       ...formData,
-      imgUrls,
+      // imgUrls,
       geolocation,
       timestamp: serverTimestamp()
     }
@@ -130,9 +129,19 @@ function EditListing() {
     // location && (formDataCopy.location = location)  // not returning an address consistently
     formDataCopy.location = address
     !formDataCopy.offer && delete formDataCopy.discountedPrice
-    console.log({formDataCopy})
+
     const docRef = doc(db, 'listings', params.listingId)
     await updateDoc(docRef, formDataCopy)
+
+    console.log({docRef})
+    // await updateDoc(docRef.imgUrl, imgUrls)
+    // https://stackoverflow.com/questions/46597327/difference-between-firestore-set-with-merge-true-and-update
+    // const listingsRef = collection(db, 'listings')
+    // listingsRef.doc(params.listingId).set({
+    //   "imgUrls": imgUrls
+    // }, {merge:true})
+
+    // Can I update the imgUrls property???
     setLoading(false)
     toast.success('Listing was updated.')
     // navigate(`/category/${formDataCopy.type}/${docRef.id}`)
