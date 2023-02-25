@@ -107,19 +107,21 @@ function EditListing() {
       setLoading(false)
       toast.error('Something went wrong while uploading images.')
     })
-    //const imgUrlMap = new Map()
-    // Object.values(formData.imgUrls).forEach(imgUrl => {
-    //   imgUrlMap.set(imgUrl)
-    // })
-    // Object.values(imgUrls).forEach(imgUrl => {
-    //   imgUrlMap.set(imgUrl)
-    // })
-    // // console.log({imgURLS: Object.fromEntries(imgUrlMap)})
-    // const convertedImgUrls = Object.fromEntries(imgUrlMap)
+    const formDataImgUrls = Object.values(formData.imgUrls).map(imgUrl => imgUrl)
  
+    console.log({
+      formDataImgUrlsIsArray: Array.isArray(formDataImgUrls),
+      formDataImgUrls,
+      imgUrlsIsArray: Array.isArray(imgUrls),
+      imgUrls,
+      }
+    )
+  
+    const combinedImgUrls = formDataImgUrls.concat(imgUrls)
+
     const formDataCopy = {
       ...formData,
-      // imgUrls,
+      imgUrls: combinedImgUrls,
       geolocation,
       timestamp: serverTimestamp()
     }
@@ -134,14 +136,7 @@ function EditListing() {
     await updateDoc(docRef, formDataCopy)
 
     console.log({docRef})
-    // await updateDoc(docRef.imgUrl, imgUrls)
-    // https://stackoverflow.com/questions/46597327/difference-between-firestore-set-with-merge-true-and-update
-    // const listingsRef = collection(db, 'listings')
-    // listingsRef.doc(params.listingId).set({
-    //   "imgUrls": imgUrls
-    // }, {merge:true})
 
-    // Can I update the imgUrls property???
     setLoading(false)
     toast.success('Listing was updated.')
     // navigate(`/category/${formDataCopy.type}/${docRef.id}`)
@@ -197,7 +192,7 @@ function EditListing() {
           toast.error('You can not edit this listing.')
           navigate('/')
         }
-        console.log({listingData})
+        // console.log({listingData})
         setFormData({...listingData, address: listingData.location})
         // console.log('reached fetchListing in useEffect, data', listingData)
       } else {
