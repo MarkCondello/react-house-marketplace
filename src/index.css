@@ -869,3 +869,11 @@ button {
   gap: 10px;
   grid-template-columns: repeat(6, minmax(0, 1fr));
 }
+.listingImages li {
+  height: 100%;
+  min-height: 10vw;
+}
+.listingImages li button {
+  cursor: pointer;
+  background-color: transparent;
+}

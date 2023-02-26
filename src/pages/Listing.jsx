@@ -61,15 +61,12 @@ function Listing() {
 
   <Swiper slidesPerView={1} pagination={{clickable: true}} className="swiperSlider">
     {Object.values(listing.imgUrls).map((url, index) =>
-    <>
-    <p>{url}</p>
     <SwiperSlide key={index}>
       <div
         className="swiperSlideDiv"
         style={{backgroundImage: `url(${url})`, backgroundSize: 'cover', backgroundPosition: 'center'}}
         ></div>
       </SwiperSlide>
-    </>
     )}
   </Swiper>
 

@@ -18,7 +18,6 @@ function EditListing() {
   // eslint-disable-next-line
   const [geoLocationEnabled, setGeoLocationEnabled] = useState(true),
   [loading, setLoading] = useState(false),
-  // [listing, setListing] = useState(false),
   [formData, setFormData] = useState({
     type: 'rent',
     name: '',
@@ -30,7 +29,7 @@ function EditListing() {
     offer: false,
     regularPrice: 0,
     discountedPrice: 0,
-    images: {},
+    images: [],
     imgUrls: [],
     latitude: 0,
     longitude: 0,
@@ -47,16 +46,16 @@ function EditListing() {
         imgUrls : prevState.imgUrls.filter((img) => img !== imgUrl) 
        }
     })
+    onSubmit({redirect: false})
   },
-  onSubmit = async () => {
+  onSubmit = async ({redirect = true}) => {
     // event.preventDefault()
     setLoading(true)
     if (parseInt(discountedPrice) >= parseInt(regularPrice)) {
       setLoading(false)
       toast.error('Discounted price needs to be less than regular price.')
     }
-    //ToDo: need to check if the existing images plus images is greater than 6
-    if (images.length > 6) {
+    if ((images?.length + formData.imgUrls?.length) > 6) {
       setLoading(false)
       toast.error('Max 6 images')
       return
@@ -110,13 +109,17 @@ function EditListing() {
       })
     }
 
-    const imgUrls = await Promise.all(
-      [...images].map((image) => storeImage(image))
-    ).catch(()=>{
-      setLoading(false)
-      toast.error('Something went wrong while uploading images.')
-    })
-    const combinedImgUrls = Object.values(formData.imgUrls).concat(imgUrls)
+    let imgUrls = []
+    if (images?.length){
+      imgUrls = await Promise.all(
+        [...images].map((image) => storeImage(image))
+        ).catch(()=>{
+          setLoading(false)
+          toast.error('Something went wrong while uploading images.')
+        }) ?? []
+    }
+
+    const combinedImgUrls = Object.values(formData.imgUrls ?? []).concat(imgUrls)
 
     const formDataCopy = {
       ...formData,
@@ -136,9 +139,9 @@ function EditListing() {
 
     setLoading(false)
     toast.success('Listing was updated.')
-    // if (redirect) {
+    if (redirect) {
       navigate(`/category/${formDataCopy.type}/${docRef.id}`)
-    // }
+    }
   },
   onMutate = (event) => {
     let boolean = null
@@ -377,7 +380,6 @@ function EditListing() {
           maxLength='6'
           accept='.jpg,.png,.jpeg'
           multiple
-          required
         />
         <ul className="listingImages">
           {Object.entries(formData.imgUrls).map((imgUrl, index) => (
@@ -385,7 +387,9 @@ function EditListing() {
               key={index}
               style={{height: '100px',backgroundImage: `url(${imgUrl[1]})`, backgroundSize: 'cover', backgroundPosition: 'center'}}
             >
-              <DeleteIcon  fill="rgb(321, 76, 60)" onClick={() => onDeleteImage(imgUrl[1])} />
+              <button>
+                <DeleteIcon fill="rgb(321, 76, 60)" onClick={() => onDeleteImage(imgUrl[1])} />
+              </button>
             </li>
           ))
           }
