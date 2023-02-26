@@ -12,6 +12,8 @@ import { useNavigate, useParams } from 'react-router-dom'
 import Spinner from '../components/Spinner'
 import { toast } from 'react-toastify'
 
+import { ReactComponent as DeleteIcon } from '../assets/svg/deleteIcon.svg'
+
 function EditListing() {
   // eslint-disable-next-line
   const [geoLocationEnabled, setGeoLocationEnabled] = useState(true),
@@ -29,17 +31,25 @@ function EditListing() {
     regularPrice: 0,
     discountedPrice: 0,
     images: {},
-    imgUrls: {},
+    imgUrls: [],
     latitude: 0,
     longitude: 0,
   }),
   auth = getAuth(),
   navigate = useNavigate(),
   params = useParams(),
-  // isMounted = useRef(true),
   {type, name, bedrooms, bathrooms, parking, furnished, address, offer, regularPrice, discountedPrice, images, latitude, longitude} = formData,
-  onSubmit = async (event) => {
-    event.preventDefault()
+  
+  onDeleteImage = (imgUrl) => {
+    setFormData((prevState) => {
+       return {
+        ...prevState,
+        imgUrls : prevState.imgUrls.filter((img) => img !== imgUrl) 
+       }
+    })
+  },
+  onSubmit = async () => {
+    // event.preventDefault()
     setLoading(true)
     if (parseInt(discountedPrice) >= parseInt(regularPrice)) {
       setLoading(false)
@@ -77,7 +87,6 @@ function EditListing() {
         filename = `${auth.currentUser.uid}-${image.name}-${uuidv4()}`,
         storageRef = ref(storage, `images/${filename}`),
         uploadTask = uploadBytesResumable(storageRef, image)
-
         uploadTask.on('state_changed', (snapshot) => {
           const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
           console.log(`Upload is ${progress}% done`)
@@ -107,17 +116,7 @@ function EditListing() {
       setLoading(false)
       toast.error('Something went wrong while uploading images.')
     })
-    const formDataImgUrls = Object.values(formData.imgUrls).map(imgUrl => imgUrl)
- 
-    console.log({
-      formDataImgUrlsIsArray: Array.isArray(formDataImgUrls),
-      formDataImgUrls,
-      imgUrlsIsArray: Array.isArray(imgUrls),
-      imgUrls,
-      }
-    )
-  
-    const combinedImgUrls = formDataImgUrls.concat(imgUrls)
+    const combinedImgUrls = Object.values(formData.imgUrls).concat(imgUrls)
 
     const formDataCopy = {
       ...formData,
@@ -135,11 +134,11 @@ function EditListing() {
     const docRef = doc(db, 'listings', params.listingId)
     await updateDoc(docRef, formDataCopy)
 
-    console.log({docRef})
-
     setLoading(false)
     toast.success('Listing was updated.')
-    // navigate(`/category/${formDataCopy.type}/${docRef.id}`)
+    // if (redirect) {
+      navigate(`/category/${formDataCopy.type}/${docRef.id}`)
+    // }
   },
   onMutate = (event) => {
     let boolean = null
@@ -163,23 +162,7 @@ function EditListing() {
     }
   }
 
-  //fetch listing to edit
   useEffect(() => {
-    // console.log({currentUser: auth.currentUser})
-    // if (listing && listing.userRef !== auth.currentUser?.uid) {
-    //   toast.error('You can not edit this listing.')
-    //   navigate('/')
-    // }
-    // if (isMounted) {
-    //   onAuthStateChanged(auth, (user) => { // I think this checks if the user has logged into another account????
-    //     if (user) {
-    //       setFormData({...formData, userRef: user.uid})
-    //     } else {
-    //       navigate('/sign-in')
-    //     }
-    //   })
-    // }
-
     setLoading(true)
     const fetchListing = async () => {
       const docRef = doc(db, 'listings', params.listingId),
@@ -192,7 +175,6 @@ function EditListing() {
           toast.error('You can not edit this listing.')
           navigate('/')
         }
-        // console.log({listingData})
         setFormData({...listingData, address: listingData.location})
         // console.log('reached fetchListing in useEffect, data', listingData)
       } else {
@@ -398,21 +380,22 @@ function EditListing() {
           required
         />
         <ul className="listingImages">
-          {Object.values(formData.imgUrls).map((imgUrl, index) => (
+          {Object.entries(formData.imgUrls).map((imgUrl, index) => (
             <li
               key={index}
-              style={{height: '100px',backgroundImage: `url(${imgUrl})`, backgroundSize: 'cover', backgroundPosition: 'center'}}
+              style={{height: '100px',backgroundImage: `url(${imgUrl[1]})`, backgroundSize: 'cover', backgroundPosition: 'center'}}
             >
-              {/* Add delete icon */}
+              <DeleteIcon  fill="rgb(321, 76, 60)" onClick={() => onDeleteImage(imgUrl[1])} />
             </li>
           ))
           }
         </ul>
   
         <button
+          // onClick={onSave}
           type="submit"
           className='primaryButton createListingButton'
-        >Edit Listing</button>
+          >Edit Listing</button>
       </form>
     </main>
   </div>

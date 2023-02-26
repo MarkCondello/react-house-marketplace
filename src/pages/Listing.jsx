@@ -66,7 +66,7 @@ function Listing() {
     <SwiperSlide key={index}>
       <div
         className="swiperSlideDiv"
-        style={{backgroundImage: `url(${listing.imgUrls[0]})`, backgroundSize: 'cover', backgroundPosition: 'center'}}
+        style={{backgroundImage: `url(${url})`, backgroundSize: 'cover', backgroundPosition: 'center'}}
         ></div>
       </SwiperSlide>
     </>
